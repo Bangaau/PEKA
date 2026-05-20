@@ -2,14 +2,14 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Jurnal Pembelajaran PEKA</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Gaya khusus untuk PDF / Print */
+        /* Gaya Khusus Cetak PDF */
         @media print {
             body { background-color: white !important; color: black !important; }
             .no-print { display: none !important; }
@@ -22,77 +22,60 @@
             
             @page { size: A4 portrait; margin: 1.5cm; }
 
-            .print-table {
-                width: 100%;
-                border-collapse: collapse;
-                margin-bottom: 20px;
-            }
-
+            .print-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
             .print-table th, .print-table td {
                 border: 1px solid #000 !important;
                 padding: 8px 10px !important;
                 font-size: 11pt !important;
                 vertical-align: top;
             }
-            
-            .print-table th {
-                background-color: #ffeb3b !important; /* Warna kuning dari gambar */
-                font-weight: bold;
-                text-align: center;
-                vertical-align: middle;
-            }
-
-            .row-holiday td {
-                background-color: #d32f2f !important; /* Warna merah */
-                color: white !important;
-                font-weight: bold;
-                text-align: center !important;
-            }
+            .print-table th { background-color: #ffeb3b !important; font-weight: bold; text-align: center; vertical-align: middle; }
+            .row-holiday td { background-color: #d32f2f !important; color: white !important; font-weight: bold; text-align: center !important; }
         }
         
         @media screen { .print-only { display: none; } }
         
-        input, select, textarea { font-size: 14px !important; }
+        /* Mencegah Zoom Otomatis di HP */
+        input, select, textarea { font-size: 16px !important; }
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-900 min-h-screen">
+<body class="bg-slate-100 font-sans text-slate-900 min-h-screen pb-20">
 
     <!-- MODAL PROFIL & PENGATURAN -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print">
-        <div class="bg-white rounded-2xl p-6 w-full max-w-lg shadow-xl relative fade-in">
-            <button type="button" onclick="tutupPengaturan()" id="closeSettingsBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-600 hidden">
+    <div id="settingsModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden no-print transition-all">
+        <div class="bg-white rounded-3xl p-6 w-full max-w-lg shadow-2xl relative fade-in">
+            <button type="button" id="closeSettingsBtn" class="absolute top-4 right-4 text-slate-400 hover:text-slate-700 hidden bg-slate-100 p-1.5 rounded-full">
                 <i data-lucide="x" class="w-5 h-5"></i>
             </button>
-            <h2 class="text-xl font-bold text-slate-800 mb-4 flex items-center">
+            <h2 class="text-xl font-bold text-slate-800 mb-5 flex items-center">
                 <i data-lucide="settings" class="mr-2 text-blue-600"></i> Profil Pengguna
             </h2>
-            <form onsubmit="simpanPengaturan(event)" class="space-y-4">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Fasilitator</label>
-                        <input type="text" id="setFasilitator" placeholder="Cth: Auliadi, S.Pd" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Satuan Pendidikan</label>
-                        <input type="text" id="setSekolah" placeholder="Cth: SDN 2 Kapar" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Nama Kepala Sekolah</label>
-                        <input type="text" id="setKepsek" placeholder="Nama & Gelar Kepsek" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 mb-1">Kota Tempat TTD</label>
-                        <input type="text" id="setKota" placeholder="Cth: Tabalong" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50">
-                    </div>
+            <form id="settingsForm" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Nama Fasilitator</label>
+                    <input type="text" id="setFasilitator" placeholder="Cth: Auliadi, S.Pd" required class="w-full border border-slate-300 rounded-xl p-3 bg-slate-50 focus:ring-blue-500 focus:border-blue-500">
                 </div>
-                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3 rounded-lg hover:bg-blue-700 font-bold transition-colors mt-4">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Satuan Pendidikan</label>
+                    <input type="text" id="setSekolah" placeholder="Cth: SDN 2 Kapar" required class="w-full border border-slate-300 rounded-xl p-3 bg-slate-50 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Nama Kepala Sekolah</label>
+                    <input type="text" id="setKepsek" placeholder="Nama & Gelar Kepsek" required class="w-full border border-slate-300 rounded-xl p-3 bg-slate-50 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">Kota Tempat TTD</label>
+                    <input type="text" id="setKota" placeholder="Cth: Tabalong" required class="w-full border border-slate-300 rounded-xl p-3 bg-slate-50 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-600 text-white px-4 py-3.5 rounded-xl hover:bg-blue-700 font-bold text-lg shadow-md transition-colors mt-6">
                     Simpan Profil
                 </button>
             </form>
             <div class="mt-6 pt-4 border-t border-slate-200">
-                <button type="button" onclick="resetAplikasi()" class="w-full text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg text-sm font-medium transition-colors flex justify-center items-center">
+                <button type="button" id="btnReset" class="w-full text-red-500 hover:text-red-700 hover:bg-red-50 p-3 rounded-xl text-sm font-bold transition-colors flex justify-center items-center">
                     <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i> Hapus Seluruh Data (Reset)
                 </button>
             </div>
@@ -100,110 +83,108 @@
     </div>
 
     <!-- TAMPILAN UTAMA (LAYAR) -->
-    <div class="no-print max-w-4xl mx-auto p-4 md:p-6 space-y-6 pb-20">
+    <div class="no-print max-w-4xl mx-auto p-3 md:p-6 space-y-5">
         
         <!-- Header Aplikasi -->
-        <header class="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-slate-200 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3 w-full md:w-auto">
-                <div class="bg-blue-100 p-3 rounded-xl text-blue-600 shrink-0">
-                    <i data-lucide="book-open" class="w-6 h-6"></i>
+        <header class="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-4 w-full sm:w-auto">
+                <div class="bg-blue-100 p-3.5 rounded-2xl text-blue-600 shrink-0">
+                    <i data-lucide="book-open" class="w-7 h-7"></i>
                 </div>
                 <div class="flex-1">
-                    <h1 class="text-xl font-bold text-slate-800">Jurnal PEKA</h1>
-                    <p class="text-sm text-slate-500" id="headerSekolah">Memuat data...</p>
+                    <h1 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Jurnal PEKA</h1>
+                    <p class="text-sm font-medium text-slate-500" id="headerSekolah">Memuat data...</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2 w-full md:w-auto">
-                <button onclick="bukaPengaturan()" class="w-full md:w-auto bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg hover:bg-slate-200 font-medium flex justify-center items-center transition-colors text-sm border border-slate-300">
-                    <i data-lucide="user" class="w-4 h-4 mr-2"></i> Profil
+            <div class="w-full sm:w-auto">
+                <button id="btnBukaProfil" class="w-full sm:w-auto bg-slate-100 text-slate-700 px-5 py-3 rounded-xl hover:bg-slate-200 font-bold flex justify-center items-center transition-colors text-sm border border-slate-200">
+                    <i data-lucide="user" class="w-4 h-4 mr-2 text-slate-500"></i> Profil
                 </button>
             </div>
         </header>
 
         <!-- MENU NAVIGASI TAB -->
-        <div class="flex space-x-2 bg-slate-200 p-1.5 rounded-xl">
-            <button onclick="pindahTab('input')" id="btn-tab-input" class="flex-1 py-2.5 rounded-lg font-bold text-sm transition-all shadow-sm bg-blue-600 text-white flex justify-center items-center">
+        <div class="flex space-x-2 bg-slate-200 p-1.5 rounded-2xl">
+            <button id="btn-tab-input" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all shadow-sm bg-blue-600 text-white flex justify-center items-center">
                 <i data-lucide="pen-tool" class="w-4 h-4 mr-2"></i> 1. Input Jurnal
             </button>
-            <button onclick="pindahTab('preview')" id="btn-tab-preview" class="flex-1 py-2.5 rounded-lg font-bold text-sm transition-all bg-transparent text-slate-600 hover:bg-slate-300 flex justify-center items-center">
+            <button id="btn-tab-preview" class="flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-transparent text-slate-600 hover:bg-white hover:shadow-sm flex justify-center items-center">
                 <i data-lucide="calendar" class="w-4 h-4 mr-2"></i> 2. Rekap & Preview
             </button>
         </div>
 
         <!-- TAB 1: FORM INPUT JURNAL -->
-        <div id="tab-input" class="bg-white rounded-2xl p-5 md:p-8 shadow-sm border border-slate-200 fade-in">
-            <h2 class="text-lg font-bold text-slate-800 mb-6 flex items-center border-b border-slate-100 pb-4">
-                <i data-lucide="file-plus" class="w-5 h-5 mr-2 text-blue-600"></i> Form Isian Harian
-            </h2>
-            <form onsubmit="simpanJurnalBaru(event)" id="formJurnal" class="space-y-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                    <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Tanggal <span class="text-red-500">*</span></label>
-                        <input type="date" id="inpTanggal" required class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 focus:ring-blue-500 focus:border-blue-500 font-medium text-slate-800">
-                    </div>
+        <div id="tab-input" class="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-slate-200 fade-in">
+            <form id="formJurnal" class="space-y-6">
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-2">Pilih Tanggal <span class="text-red-500">*</span></label>
+                    <input type="date" id="inpTanggal" required class="w-full border border-slate-300 rounded-xl p-3.5 bg-slate-50 focus:ring-blue-500 focus:border-blue-500 font-bold text-slate-800">
                 </div>
 
                 <!-- Checkbox Libur -->
-                <div class="flex items-center p-4 bg-red-50 rounded-lg border border-red-200 cursor-pointer hover:bg-red-100 transition-colors" onclick="toggleCheckbox('inpLibur')">
+                <div class="flex items-center p-4 bg-red-50 rounded-xl border border-red-200 cursor-pointer hover:bg-red-100 transition-colors" id="btnToggleLibur">
                     <input type="checkbox" id="inpLibur" class="w-5 h-5 text-red-600 rounded border-red-300 cursor-pointer pointer-events-none">
-                    <label class="ml-3 text-sm font-bold text-red-800 cursor-pointer select-none">Tandai hari ini sebagai Hari Libur</label>
+                    <label class="ml-3 text-sm font-bold text-red-800 cursor-pointer select-none w-full">Tandai hari ini sebagai Hari Libur</label>
                 </div>
 
                 <!-- Form Normal -->
                 <div id="areaNormal" class="space-y-5">
                     <div>
-                        <label class="block text-sm font-bold text-slate-700 mb-2">Kelas <span class="text-slate-400 font-normal text-xs ml-2">(Bisa pakai "Enter" untuk baris baru)</span></label>
-                        <textarea id="inpKelas" rows="2" placeholder="Cth: Kelas 4&#10;Kelas 1 - 6" class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 resize-none"></textarea>
+                        <label class="block text-sm font-bold text-slate-700 mb-2">Kelas <span class="text-slate-400 font-normal text-xs ml-1">(Bisa pakai "Enter")</span></label>
+                        <textarea id="inpKelas" rows="2" placeholder="Cth: 4&#10;1 - 6" class="w-full border border-slate-300 rounded-xl p-3.5 bg-slate-50 resize-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Materi Yang Diajarkan</label>
-                        <textarea id="inpMateri" rows="3" placeholder="Cth: Ta'awudz & Ayat 1-2 Al-Fatihah" class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 resize-none"></textarea>
+                        <textarea id="inpMateri" rows="3" placeholder="Cth: Ta'awudz & Ayat 1-2 Al-Fatihah" class="w-full border border-slate-300 rounded-xl p-3.5 bg-slate-50 resize-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-bold text-slate-700 mb-2">Uraian Kegiatan / Metode</label>
-                        <textarea id="inpMetode" rows="2" placeholder="Cth: Tahsin&#10;Pembiasaan" class="w-full border border-slate-300 rounded-lg p-3 bg-slate-50 resize-none"></textarea>
+                        <textarea id="inpMetode" rows="2" placeholder="Cth: Tahsin&#10;Pembiasaan" class="w-full border border-slate-300 rounded-xl p-3.5 bg-slate-50 resize-none focus:ring-blue-500 focus:border-blue-500"></textarea>
                     </div>
                 </div>
 
                 <!-- Form Libur -->
                 <div id="areaLibur" class="hidden">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Keterangan Libur <span class="text-red-500">*</span></label>
-                    <input type="text" id="inpKetLibur" placeholder="Cth: Libur Hari Pahlawan Nasional" class="w-full border border-slate-300 rounded-lg p-3 bg-white border-red-300 focus:ring-red-500">
+                    <input type="text" id="inpKetLibur" placeholder="Cth: Libur Hari Pahlawan Nasional" class="w-full border border-red-300 rounded-xl p-3.5 bg-white focus:ring-red-500 focus:border-red-500 text-red-900 font-medium">
                 </div>
 
-                <div class="pt-4 border-t border-slate-100">
-                    <button type="submit" class="w-full md:w-auto px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 font-bold text-lg shadow-md transition-all flex items-center justify-center">
-                        <i data-lucide="save" class="w-5 h-5 mr-2"></i> Simpan Data ke Jurnal
+                <div class="pt-4">
+                    <button type="submit" class="w-full py-4 bg-blue-600 text-white rounded-xl hover:bg-blue-700 font-black text-lg shadow-lg transition-all flex items-center justify-center active:scale-95">
+                        <i data-lucide="save" class="w-6 h-6 mr-2"></i> Simpan Data ke Jurnal
                     </button>
                 </div>
             </form>
         </div>
 
         <!-- TAB 2: PREVIEW & REKAP PER BULAN -->
-        <div id="tab-preview" class="space-y-6 hidden fade-in">
+        <div id="tab-preview" class="space-y-5 hidden fade-in">
             
             <!-- Kontrol Filter Bulan -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center justify-between gap-4">
                 <div class="w-full md:w-1/2">
                     <label class="block text-sm font-bold text-slate-700 mb-2">Tampilkan Jurnal Bulan:</label>
                     <div class="relative">
-                        <input type="month" id="filterBulan" onchange="ubahBulan(this.value)" class="w-full border border-slate-300 rounded-lg p-3 bg-blue-50 font-bold text-blue-800 cursor-pointer pl-10">
-                        <i data-lucide="calendar-search" class="absolute left-3 top-3.5 text-blue-600 w-5 h-5 pointer-events-none"></i>
+                        <input type="month" id="filterBulan" class="w-full border border-slate-300 rounded-xl p-3.5 bg-blue-50 font-bold text-blue-800 cursor-pointer pl-11">
+                        <i data-lucide="calendar-search" class="absolute left-3.5 top-4 text-blue-600 w-5 h-5 pointer-events-none"></i>
                     </div>
                 </div>
                 <div class="w-full md:w-auto pt-2 md:pt-6">
-                    <button onclick="window.print()" class="w-full bg-emerald-600 text-white px-6 py-3 rounded-lg hover:bg-emerald-700 font-bold flex items-center justify-center transition-colors shadow-md">
-                        <i data-lucide="printer" class="w-5 h-5 mr-2"></i> Cetak Dokumen PDF
+                    <button onclick="window.print()" class="w-full bg-emerald-600 text-white px-8 py-3.5 rounded-xl hover:bg-emerald-700 font-bold flex items-center justify-center transition-colors shadow-md active:scale-95">
+                        <i data-lucide="printer" class="w-5 h-5 mr-2"></i> Cetak PDF
                     </button>
                 </div>
             </div>
 
             <!-- Tabel Preview -->
-            <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
-                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-2">Preview Tabel: <span id="labelPreviewBulan" class="text-blue-600">Bulan</span></h3>
+            <div class="bg-white rounded-3xl p-5 shadow-sm border border-slate-200">
+                <h3 class="text-lg font-bold text-slate-800 mb-4 border-b border-slate-100 pb-3 flex justify-between items-center">
+                    <span>Preview Tabel</span>
+                    <span id="labelPreviewBulan" class="text-blue-600 bg-blue-50 px-3 py-1 rounded-lg text-sm">Bulan</span>
+                </h3>
                 
-                <div class="overflow-x-auto border border-slate-200 rounded-lg">
-                    <table class="w-full text-sm text-left">
+                <div class="overflow-x-auto border border-slate-200 rounded-xl">
+                    <table class="w-full text-sm text-left min-w-[700px]">
                         <thead class="text-xs text-slate-800 uppercase bg-yellow-300">
                             <tr>
                                 <th class="px-3 py-3 text-center border-r border-slate-300 w-12">No</th>
@@ -219,13 +200,13 @@
                         </tbody>
                     </table>
                 </div>
-                <p class="text-xs text-slate-500 mt-4 text-center italic">*Tabel PDF akan dicetak tanpa tombol hapus dan otomatis menyesuaikan ukuran kertas A4.</p>
+                <p class="text-xs text-slate-500 mt-4 text-center italic">*Di kertas cetak, tombol hapus tidak akan muncul.</p>
             </div>
         </div>
 
     </div>
 
-    <!-- AREA CETAK PDF (Hanya terlihat saat Ctrl+P) -->
+    <!-- AREA CETAK PDF (Hanya terlihat saat Print) -->
     <div class="print-only">
         <div style="text-align: center; margin-bottom: 25px; font-family: 'Times New Roman', Times, serif;">
             <h2 style="font-size: 14pt; font-weight: bold; margin: 0; line-height: 1.2;">JURNAL PEMBELAJARAN BULANAN</h2>
@@ -282,328 +263,331 @@
     </div>
 
     <!-- Toast Notifikasi -->
-    <div id="toastNotif" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3 rounded-full shadow-2xl flex items-center space-x-2 z-50 hidden transition-opacity duration-300 opacity-0 no-print">
+    <div id="toastNotif" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3.5 rounded-full shadow-2xl flex items-center space-x-2 z-50 hidden transition-opacity duration-300 opacity-0 no-print">
         <i data-lucide="check-circle-2" class="text-emerald-400 w-5 h-5"></i>
-        <span id="toastMsg" class="font-medium text-sm">Data Tersimpan</span>
+        <span id="toastMsg" class="font-bold text-sm">Data Tersimpan</span>
     </div>
 
-    <!-- SCRIPT APLIKASI -->
+    <!-- SCRIPT APLIKASI (KEBAL ERROR) -->
     <script>
-        const STORAGE_KEY = 'jurnalPekaBulanan_FinalV4'; // Key baru agar fresh
-        let dataAplikasi = { settings: {}, journals: [], currentMonth: '' };
-
-        // --- FUNGSI FORMAT TANGGAL INDONESIA ---
-        function formatTanggal(dateStr) {
-            if(!dateStr) return '';
-            const d = new Date(dateStr);
-            const namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-            const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            return `${namaHari[d.getDay()]}, ${d.getDate()} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
-        }
-
-        function formatBulan(yyyyMM) {
-            if(!yyyyMM) return '';
-            const [thn, bln] = yyyMM.split('-');
-            const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            return `${namaBulan[parseInt(bln) - 1]} ${thn}`;
-        }
-
-        function dapatkanTglAkhirBulan(yyyyMM) {
-            if(!yyyyMM) return '';
-            const [thn, bln] = yyyMM.split('-');
-            const d = new Date(thn, parseInt(bln), 0); // hari ke-0 bulan depan = hari terakhir bulan ini
-            const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            return `${d.getDate()} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
-        }
-
-        // --- INISIALISASI & LOAD DATA ---
-        window.onload = function() {
+        document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             
-            // Set tanggal hari ini di form
-            const now = new Date();
-            const year = now.getFullYear();
-            const month = String(now.getMonth() + 1).padStart(2, '0');
-            const day = String(now.getDate()).padStart(2, '0');
-            const hariIni = `${year}-${month}-${day}`;
-            const bulanIni = `${year}-${month}`;
-            
-            document.getElementById('inpTanggal').value = hariIni;
+            const STORAGE_KEY = 'jurnalPekaBulanan_FinalV5'; // Key baru
+            let dataAplikasi = { settings: {}, journals: [], currentMonth: '' };
 
-            // Load dari Local Storage
-            const savedData = localStorage.getItem(STORAGE_KEY);
-            if (savedData) {
-                try { dataAplikasi = JSON.parse(savedData); } catch(e) {}
-            } else {
-                dataAplikasi.currentMonth = bulanIni;
+            // --- FUNGSI FORMAT TANGGAL AMAN ---
+            // Menggunakan split untuk menghindari timezone error bawaan HP
+            function formatTanggalIndo(dateStr) {
+                if(!dateStr) return '-';
+                const parts = dateStr.split('-');
+                if(parts.length !== 3) return dateStr;
+                
+                const d = new Date(parts[0], parseInt(parts[1])-1, parts[2]);
+                const namaHari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                return `${namaHari[d.getDay()]}, ${d.getDate()} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
             }
 
-            // Pastikan bulan filter sesuai
-            if(!dataAplikasi.currentMonth) dataAplikasi.currentMonth = bulanIni;
+            function formatBulanIndo(yyyyMM) {
+                if(!yyyyMM) return '-';
+                const parts = yyyMM.split('-');
+                if(parts.length < 2) return yyyMM;
+                const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                return `${namaBulan[parseInt(parts[1]) - 1]} ${parts[0]}`;
+            }
+
+            function dapatkanTglAkhir(yyyyMM) {
+                if(!yyyyMM) return '-';
+                const parts = yyyMM.split('-');
+                const d = new Date(parts[0], parseInt(parts[1]), 0); 
+                const namaBulan = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+                return `${d.getDate()} ${namaBulan[d.getMonth()]} ${d.getFullYear()}`;
+            }
+
+            // --- LOAD DATA AWAL ---
+            const now = new Date();
+            const strTglIni = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            const strBulanIni = strTglIni.substring(0, 7);
+            
+            document.getElementById('inpTanggal').value = strTglIni;
+
+            try {
+                const savedData = localStorage.getItem(STORAGE_KEY);
+                if (savedData) {
+                    dataAplikasi = JSON.parse(savedData);
+                } else {
+                    dataAplikasi.currentMonth = strBulanIni;
+                }
+            } catch(e) {
+                console.error("Gagal load storage");
+                dataAplikasi.currentMonth = strBulanIni;
+            }
+
+            if(!dataAplikasi.currentMonth) dataAplikasi.currentMonth = strBulanIni;
             document.getElementById('filterBulan').value = dataAplikasi.currentMonth;
 
-            // Cek Profil
+            // --- SISTEM TAB ---
+            const btnTabInput = document.getElementById('btn-tab-input');
+            const btnTabPreview = document.getElementById('btn-tab-preview');
+            const tabInput = document.getElementById('tab-input');
+            const tabPreview = document.getElementById('tab-preview');
+
+            function pindahTab(namaTab) {
+                if(namaTab === 'input') {
+                    tabInput.classList.remove('hidden');
+                    tabPreview.classList.add('hidden');
+                    btnTabInput.className = "flex-1 py-3 rounded-xl font-bold text-sm transition-all shadow-sm bg-blue-600 text-white flex justify-center items-center";
+                    btnTabPreview.className = "flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-transparent text-slate-600 hover:bg-white hover:shadow-sm flex justify-center items-center";
+                } else {
+                    tabInput.classList.add('hidden');
+                    tabPreview.classList.remove('hidden');
+                    btnTabPreview.className = "flex-1 py-3 rounded-xl font-bold text-sm transition-all shadow-sm bg-blue-600 text-white flex justify-center items-center";
+                    btnTabInput.className = "flex-1 py-3 rounded-xl font-bold text-sm transition-all bg-transparent text-slate-600 hover:bg-white hover:shadow-sm flex justify-center items-center";
+                    renderTabel();
+                }
+            }
+
+            btnTabInput.addEventListener('click', () => pindahTab('input'));
+            btnTabPreview.addEventListener('click', () => pindahTab('preview'));
+
+            // --- PROFIL & PENGATURAN ---
+            const modalProfil = document.getElementById('settingsModal');
+            
+            function bukaPengaturan() {
+                const s = dataAplikasi.settings;
+                document.getElementById('setFasilitator').value = s.fasilitator || '';
+                document.getElementById('setSekolah').value = s.sekolah || '';
+                document.getElementById('setKepsek').value = s.kepsek || '';
+                document.getElementById('setKota').value = s.kota || '';
+                
+                modalProfil.classList.remove('hidden');
+                if(s.fasilitator) document.getElementById('closeSettingsBtn').classList.remove('hidden');
+            }
+
+            function terapkanProfil() {
+                const s = dataAplikasi.settings;
+                document.getElementById('headerSekolah').innerText = s.sekolah || 'Satuan Pendidikan';
+                document.getElementById('printJudulSekolah').innerText = s.sekolah ? `PEKA ${s.sekolah.toUpperCase()}` : 'PEKA';
+                document.getElementById('printNamaFasilitator').innerText = s.fasilitator || '-';
+                document.getElementById('printNamaSekolah').innerText = s.sekolah || '-';
+                document.getElementById('printTtdFasilitator').innerText = s.fasilitator || '-';
+                document.getElementById('printTtdSekolah').innerText = s.sekolah || '-';
+                document.getElementById('printTtdKepsek').innerText = s.kepsek || '-';
+                document.getElementById('printTanggalTtd').innerText = `${s.kota || 'Kota'}, ${dapatkanTglAkhir(dataAplikasi.currentMonth)}`;
+            }
+
+            // Jika profil kosong saat baru buka, tampilkan modal
             if (!dataAplikasi.settings.fasilitator) {
                 bukaPengaturan();
             } else {
                 terapkanProfil();
             }
 
-            renderTabel();
-        };
+            document.getElementById('btnBukaProfil').addEventListener('click', bukaPengaturan);
+            document.getElementById('closeSettingsBtn').addEventListener('click', () => {
+                modalProfil.classList.add('hidden');
+            });
 
-        // --- SISTEM TAB ---
-        window.pindahTab = function(namaTab) {
-            document.getElementById('tab-input').classList.add('hidden');
-            document.getElementById('tab-preview').classList.add('hidden');
-            
-            // Reset warna tombol
-            const btnInp = document.getElementById('btn-tab-input');
-            const btnPrev = document.getElementById('btn-tab-preview');
-            
-            btnInp.className = "flex-1 py-2.5 rounded-lg font-bold text-sm transition-all bg-transparent text-slate-600 hover:bg-slate-300 flex justify-center items-center";
-            btnPrev.className = "flex-1 py-2.5 rounded-lg font-bold text-sm transition-all bg-transparent text-slate-600 hover:bg-slate-300 flex justify-center items-center";
+            document.getElementById('settingsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                dataAplikasi.settings = {
+                    fasilitator: document.getElementById('setFasilitator').value.trim(),
+                    sekolah: document.getElementById('setSekolah').value.trim(),
+                    kepsek: document.getElementById('setKepsek').value.trim(),
+                    kota: document.getElementById('setKota').value.trim()
+                };
+                
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi)); } catch(err) {}
+                
+                terapkanProfil();
+                modalProfil.classList.add('hidden');
+                document.getElementById('closeSettingsBtn').classList.remove('hidden');
+                tampilkanNotif('Profil Tersimpan!');
+            });
 
-            // Aktifkan tab yang diklik
-            document.getElementById('tab-' + namaTab).classList.remove('hidden');
-            document.getElementById('btn-tab-' + namaTab).className = "flex-1 py-2.5 rounded-lg font-bold text-sm transition-all shadow-sm bg-blue-600 text-white flex justify-center items-center";
-            
-            if(namaTab === 'preview') renderTabel();
-        };
-
-        // --- LOGIKA FORM INPUT JURNAL ---
-        window.toggleCheckbox = function(id) {
-            const cb = document.getElementById(id);
-            cb.checked = !cb.checked;
-            
-            const isLibur = cb.checked;
-            const areaNormal = document.getElementById('areaNormal');
-            const areaLibur = document.getElementById('areaLibur');
-            const inpKetLibur = document.getElementById('inpKetLibur');
-
-            if(isLibur) {
-                areaNormal.classList.add('hidden');
-                areaLibur.classList.remove('hidden');
-                inpKetLibur.required = true;
-            } else {
-                areaNormal.classList.remove('hidden');
-                areaLibur.classList.add('hidden');
-                inpKetLibur.required = false;
-            }
-        };
-
-        window.simpanJurnalBaru = function(event) {
-            event.preventDefault(); // Wajib agar web tidak reload
-
-            const tgl = document.getElementById('inpTanggal').value;
-            const isLibur = document.getElementById('inpLibur').checked;
-            const ketLibur = document.getElementById('inpKetLibur').value;
-            const kelas = document.getElementById('inpKelas').value;
-            const materi = document.getElementById('inpMateri').value;
-            const metode = document.getElementById('inpMetode').value;
-
-            if(!tgl) return alert("Pilih tanggal!");
-
-            // Format Data
-            const jurnalBaru = {
-                id: Date.now().toString(),
-                tanggal: tgl,
-                isLibur: isLibur,
-                kelas: kelas ? kelas.replace(/\n/g, '<br>') : '-',
-                materi: materi ? materi.replace(/\n/g, '<br>') : '-',
-                metode: metode ? metode.replace(/\n/g, '<br>') : '-',
-                keteranganLibur: ketLibur || 'Libur'
-            };
-
-            // Masukkan ke array
-            if(!dataAplikasi.journals) dataAplikasi.journals = [];
-            dataAplikasi.journals.push(jurnalBaru);
-
-            // AMANAH PENTING: Ubah filter bulan sesuai tanggal yang baru diinput
-            const bulanDiinput = tgl.substring(0, 7); // ambil YYYY-MM
-            dataAplikasi.currentMonth = bulanDiinput;
-            document.getElementById('filterBulan').value = bulanDiinput;
-
-            // Simpan
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi));
-
-            // Bersihkan form
-            document.getElementById('inpKelas').value = '';
-            document.getElementById('inpMateri').value = '';
-            document.getElementById('inpMetode').value = '';
-            document.getElementById('inpKetLibur').value = '';
-            if(isLibur) toggleCheckbox('inpLibur'); // matikan kembali
-
-            tampilkanNotif('Jurnal Berhasil Disimpan!');
-            
-            // OTOMATIS PINDAH KE TAB PREVIEW AGAR DATA LANGSUNG TERLIHAT
-            pindahTab('preview');
-        };
-
-        // --- RENDER TABEL PREVIEW ---
-        window.ubahBulan = function(val) {
-            dataAplikasi.currentMonth = val;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi));
-            renderTabel();
-        };
-
-        window.hapusJurnal = function(id) {
-            if(confirm("Yakin ingin menghapus baris jurnal ini?")) {
-                dataAplikasi.journals = dataAplikasi.journals.filter(j => j.id !== id);
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi));
-                renderTabel();
-            }
-        };
-
-        function renderTabel() {
-            const tbodyLayar = document.getElementById('tabelPreviewBody');
-            const tbodyCetak = document.getElementById('tabelPrintBody');
-            const filterBulan = dataAplikasi.currentMonth;
-
-            // Label Bulan
-            const namaBulan = formatBulan(filterBulan);
-            document.getElementById('labelPreviewBulan').innerText = namaBulan;
-            document.getElementById('printBulanTahun').innerText = namaBulan;
-            
-            // Tanggal TTD Cetak
-            const tglAkhir = dapatkanTglAkhirBulan(filterBulan);
-            document.getElementById('printTanggalTtd').innerText = `${dataAplikasi.settings.kota || 'Kota'}, ${tglAkhir}`;
-
-            // Saring data berdasarkan bulan
-            let dataSaring = (dataAplikasi.journals || []).filter(j => j.tanggal.startsWith(filterBulan));
-            
-            // Urutkan berdasarkan tanggal terlama ke terbaru
-            dataSaring.sort((a, b) => new Date(a.tanggal) - new Date(b.tanggal));
-
-            if(dataSaring.length === 0) {
-                tbodyLayar.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-500 italic">Belum ada jurnal untuk bulan ${namaBulan}.</td></tr>`;
-                tbodyCetak.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Belum ada data</td></tr>`;
-                return;
-            }
-
-            let htmlLayar = '';
-            let htmlCetak = '';
-
-            dataSaring.forEach((j, i) => {
-                const no = i + 1;
-                const tglTampil = formatTanggal(j.tanggal);
-
-                if(j.isLibur) {
-                    htmlLayar += `
-                        <tr class="bg-red-600 text-white font-bold">
-                            <td class="px-3 py-2 text-center border-r border-red-500">${no}.</td>
-                            <td class="px-4 py-2 border-r border-red-500 text-center whitespace-nowrap">${tglTampil}</td>
-                            <td class="px-4 py-2 border-r border-red-500 text-center">-</td>
-                            <td class="px-4 py-2 border-r border-red-500 text-center">${j.keteranganLibur}</td>
-                            <td class="px-4 py-2 text-center border-r border-red-500">Libur</td>
-                            <td class="px-2 py-2 text-center bg-white border-none">
-                                <button onclick="hapusJurnal('${j.id}')" class="text-red-500 bg-red-50 p-1.5 rounded" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4 mx-auto"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                    htmlCetak += `
-                        <tr class="row-holiday">
-                            <td>${no}.</td>
-                            <td>${tglTampil}</td>
-                            <td>-</td>
-                            <td>${j.keteranganLibur}</td>
-                            <td>Libur</td>
-                        </tr>
-                    `;
-                } else {
-                    htmlLayar += `
-                        <tr class="hover:bg-slate-50">
-                            <td class="px-3 py-2 text-center border-r border-slate-200">${no}.</td>
-                            <td class="px-4 py-2 border-r border-slate-200 text-center whitespace-nowrap">${tglTampil}</td>
-                            <td class="px-4 py-2 border-r border-slate-200 text-center leading-relaxed">${j.kelas}</td>
-                            <td class="px-4 py-2 border-r border-slate-200 leading-relaxed">${j.materi}</td>
-                            <td class="px-4 py-2 border-r border-slate-200 leading-relaxed">${j.metode}</td>
-                            <td class="px-2 py-2 text-center border-r border-slate-200">
-                                <button onclick="hapusJurnal('${j.id}')" class="text-red-500 bg-red-50 p-1.5 rounded hover:text-red-700" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4 mx-auto"></i></button>
-                            </td>
-                        </tr>
-                    `;
-                    htmlCetak += `
-                        <tr>
-                            <td style="text-align: center;">${no}.</td>
-                            <td style="text-align: center;">${tglTampil}</td>
-                            <td style="text-align: center;">${j.kelas}</td>
-                            <td style="text-align: left;">${j.materi}</td>
-                            <td style="text-align: left;">${j.metode}</td>
-                        </tr>
-                    `;
+            document.getElementById('btnReset').addEventListener('click', () => {
+                if(confirm("YAKIN HAPUS SEMUA DATA? Data jurnal tidak bisa dikembalikan.")) {
+                    localStorage.removeItem(STORAGE_KEY);
+                    window.location.reload();
                 }
             });
 
-            tbodyLayar.innerHTML = htmlLayar;
-            tbodyCetak.innerHTML = htmlCetak;
-            lucide.createIcons(); // refresh icon sampah
-        }
+            // --- LOGIKA CHECKBOX LIBUR ---
+            document.getElementById('btnToggleLibur').addEventListener('click', function() {
+                const cb = document.getElementById('inpLibur');
+                cb.checked = !cb.checked;
+                
+                if(cb.checked) {
+                    document.getElementById('areaNormal').classList.add('hidden');
+                    document.getElementById('areaLibur').classList.remove('hidden');
+                    document.getElementById('inpKetLibur').required = true;
+                } else {
+                    document.getElementById('areaNormal').classList.remove('hidden');
+                    document.getElementById('areaLibur').classList.add('hidden');
+                    document.getElementById('inpKetLibur').required = false;
+                }
+            });
 
-        // --- PROFIL & PENGATURAN ---
-        window.bukaPengaturan = function() {
-            const s = dataAplikasi.settings;
-            document.getElementById('setFasilitator').value = s.fasilitator || '';
-            document.getElementById('setSekolah').value = s.sekolah || '';
-            document.getElementById('setKepsek').value = s.kepsek || '';
-            document.getElementById('setKota').value = s.kota || '';
-            
-            document.getElementById('settingsModal').classList.remove('hidden');
-            if(s.fasilitator) document.getElementById('closeSettingsBtn').classList.remove('hidden');
-        };
+            // --- SIMPAN JURNAL ---
+            document.getElementById('formJurnal').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const tgl = document.getElementById('inpTanggal').value;
+                if(!tgl) return;
 
-        window.tutupPengaturan = function() {
-            document.getElementById('settingsModal').classList.add('hidden');
-        };
+                const isLibur = document.getElementById('inpLibur').checked;
+                const ketLibur = document.getElementById('inpKetLibur').value.trim();
+                const kelas = document.getElementById('inpKelas').value.trim();
+                const materi = document.getElementById('inpMateri').value.trim();
+                const metode = document.getElementById('inpMetode').value.trim();
 
-        window.simpanPengaturan = function(e) {
-            e.preventDefault();
-            dataAplikasi.settings = {
-                fasilitator: document.getElementById('setFasilitator').value,
-                sekolah: document.getElementById('setSekolah').value,
-                kepsek: document.getElementById('setKepsek').value,
-                kota: document.getElementById('setKota').value
+                const jurnalBaru = {
+                    id: 'j_' + Date.now(),
+                    tanggal: tgl,
+                    isLibur: isLibur,
+                    kelas: kelas ? kelas.replace(/\n/g, '<br>') : '-',
+                    materi: materi ? materi.replace(/\n/g, '<br>') : '-',
+                    metode: metode ? metode.replace(/\n/g, '<br>') : '-',
+                    keteranganLibur: ketLibur || 'Libur'
+                };
+
+                if(!dataAplikasi.journals) dataAplikasi.journals = [];
+                dataAplikasi.journals.push(jurnalBaru);
+
+                // Update bulan aktif mengikuti tanggal yang diinput
+                const bulanInput = tgl.substring(0, 7);
+                dataAplikasi.currentMonth = bulanInput;
+                document.getElementById('filterBulan').value = bulanInput;
+
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi)); } catch(err) {
+                    alert("Gagal menyimpan ke memori perangkat. Memori mungkin penuh.");
+                }
+
+                // Bersihkan Inputan
+                document.getElementById('inpKelas').value = '';
+                document.getElementById('inpMateri').value = '';
+                document.getElementById('inpMetode').value = '';
+                document.getElementById('inpKetLibur').value = '';
+                if(isLibur) document.getElementById('btnToggleLibur').click();
+
+                tampilkanNotif('Jurnal Berhasil Ditambahkan!');
+                
+                // LANGSUNG PINDAH TAB PREVIEW
+                pindahTab('preview');
+            });
+
+            // --- FILTER BULAN & RENDER TABEL ---
+            document.getElementById('filterBulan').addEventListener('change', function(e) {
+                dataAplikasi.currentMonth = e.target.value;
+                try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi)); } catch(err) {}
+                renderTabel();
+            });
+
+            window.hapusJurnal = function(id) {
+                if(confirm("Hapus baris jurnal ini?")) {
+                    dataAplikasi.journals = dataAplikasi.journals.filter(j => j.id !== id);
+                    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi)); } catch(err) {}
+                    renderTabel();
+                }
             };
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(dataAplikasi));
-            
-            terapkanProfil();
-            tutupPengaturan();
-            document.getElementById('closeSettingsBtn').classList.remove('hidden');
-            tampilkanNotif('Profil Tersimpan!');
-        };
 
-        function terapkanProfil() {
-            const s = dataAplikasi.settings;
-            document.getElementById('headerSekolah').innerText = s.sekolah;
-            
-            // Set Print Texts
-            document.getElementById('printJudulSekolah').innerText = `PEKA ${s.sekolah.toUpperCase()}`;
-            document.getElementById('printNamaFasilitator').innerText = s.fasilitator;
-            document.getElementById('printNamaSekolah').innerText = s.sekolah;
-            document.getElementById('printTtdFasilitator').innerText = s.fasilitator;
-            document.getElementById('printTtdSekolah').innerText = s.sekolah;
-            document.getElementById('printTtdKepsek').innerText = s.kepsek;
-            document.getElementById('printTanggalTtd').innerText = `${s.kota}, ${dapatkanTglAkhirBulan(dataAplikasi.currentMonth)}`;
-        }
+            function renderTabel() {
+                const tbodyLayar = document.getElementById('tabelPreviewBody');
+                const tbodyCetak = document.getElementById('tabelPrintBody');
+                const filterBulan = dataAplikasi.currentMonth;
 
-        window.resetAplikasi = function() {
-            if(confirm("YAKIN HAPUS SEMUA DATA? Data jurnal tidak bisa dikembalikan.")) {
-                localStorage.removeItem(STORAGE_KEY);
-                window.location.reload();
+                const namaBulan = formatBulanIndo(filterBulan);
+                document.getElementById('labelPreviewBulan').innerText = namaBulan;
+                document.getElementById('printBulanTahun').innerText = namaBulan;
+                
+                const tglAkhir = dapatkanTglAkhir(filterBulan);
+                document.getElementById('printTanggalTtd').innerText = `${dataAplikasi.settings.kota || 'Kota'}, ${tglAkhir}`;
+
+                let dataSaring = (dataAplikasi.journals || []).filter(j => j.tanggal && j.tanggal.startsWith(filterBulan));
+                
+                // Urutkan pakai metode string locale agar aman dari timezone
+                dataSaring.sort((a, b) => a.tanggal.localeCompare(b.tanggal));
+
+                if(dataSaring.length === 0) {
+                    tbodyLayar.innerHTML = `<tr><td colspan="6" class="text-center py-12 text-slate-500 font-medium">Belum ada jurnal untuk bulan ${namaBulan}.<br><span class="text-xs text-slate-400 font-normal">Silakan input data di menu "1. Input Jurnal".</span></td></tr>`;
+                    tbodyCetak.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Belum ada data</td></tr>`;
+                    return;
+                }
+
+                let htmlLayar = '';
+                let htmlCetak = '';
+
+                dataSaring.forEach((j, i) => {
+                    const no = i + 1;
+                    const tglTampil = formatTanggalIndo(j.tanggal);
+
+                    if(j.isLibur) {
+                        htmlLayar += `
+                            <tr class="bg-red-600 text-white font-bold border-b border-red-500">
+                                <td class="px-3 py-3 text-center border-r border-red-500">${no}.</td>
+                                <td class="px-4 py-3 border-r border-red-500 text-center whitespace-nowrap">${tglTampil}</td>
+                                <td class="px-4 py-3 border-r border-red-500 text-center">-</td>
+                                <td class="px-4 py-3 border-r border-red-500 text-center">${j.keteranganLibur}</td>
+                                <td class="px-4 py-3 text-center border-r border-red-500">Libur</td>
+                                <td class="px-2 py-3 text-center bg-white border-none">
+                                    <button onclick="hapusJurnal('${j.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4 mx-auto"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        htmlCetak += `
+                            <tr class="row-holiday">
+                                <td>${no}.</td>
+                                <td>${tglTampil}</td>
+                                <td>-</td>
+                                <td>${j.keteranganLibur}</td>
+                                <td>Libur</td>
+                            </tr>
+                        `;
+                    } else {
+                        htmlLayar += `
+                            <tr class="hover:bg-slate-50 border-b border-slate-200">
+                                <td class="px-3 py-3 text-center border-r border-slate-200">${no}.</td>
+                                <td class="px-4 py-3 border-r border-slate-200 text-center whitespace-nowrap font-medium">${tglTampil}</td>
+                                <td class="px-4 py-3 border-r border-slate-200 text-center leading-relaxed">${j.kelas}</td>
+                                <td class="px-4 py-3 border-r border-slate-200 leading-relaxed">${j.materi}</td>
+                                <td class="px-4 py-3 text-center border-r border-slate-200 leading-relaxed">${j.metode}</td>
+                                <td class="px-2 py-3 text-center border-r border-slate-200">
+                                    <button onclick="hapusJurnal('${j.id}')" class="text-red-500 bg-red-50 p-2 rounded-lg hover:text-red-700" title="Hapus"><i data-lucide="trash-2" class="w-4 h-4 mx-auto"></i></button>
+                                </td>
+                            </tr>
+                        `;
+                        htmlCetak += `
+                            <tr>
+                                <td style="text-align: center;">${no}.</td>
+                                <td style="text-align: center;">${tglTampil}</td>
+                                <td style="text-align: center;">${j.kelas}</td>
+                                <td style="text-align: left;">${j.materi}</td>
+                                <td style="text-align: center;">${j.metode}</td>
+                            </tr>
+                        `;
+                    }
+                });
+
+                tbodyLayar.innerHTML = htmlLayar;
+                tbodyCetak.innerHTML = htmlCetak;
+                lucide.createIcons();
             }
-        };
 
-        // --- NOTIFIKASI ---
-        function tampilkanNotif(pesan) {
-            const t = document.getElementById('toastNotif');
-            document.getElementById('toastMsg').innerText = pesan;
-            t.classList.remove('hidden');
-            setTimeout(() => t.classList.remove('opacity-0'), 10);
-            setTimeout(() => {
-                t.classList.add('opacity-0');
-                setTimeout(() => t.classList.add('hidden'), 300);
-            }, 3000);
-        }
+            function tampilkanNotif(pesan) {
+                const t = document.getElementById('toastNotif');
+                document.getElementById('toastMsg').innerText = pesan;
+                t.classList.remove('hidden');
+                setTimeout(() => t.classList.remove('opacity-0'), 10);
+                setTimeout(() => {
+                    t.classList.add('opacity-0');
+                    setTimeout(() => t.classList.add('hidden'), 300);
+                }, 3000);
+            }
+
+            // Panggil sekali untuk render awal
+            renderTabel();
+        });
     </script>
 </body>
 </html>
