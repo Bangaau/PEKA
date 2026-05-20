@@ -3,38 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jurnal Pembelajaran Guru</title>
-    <!-- Tailwind CSS -->
+    <title>Jurnal Pembelajaran Guru - Export Word</title>
+    <!-- Tailwind CSS untuk tampilan di web -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* CSS khusus untuk mode cetak/print */
-        @media print {
-            body {
-                background-color: white !important;
-            }
-            .no-print {
-                display: none !important;
-            }
-            .print-exact {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-            }
-            .print-shadow-none {
-                box-shadow: none !important;
-            }
-            .print-w-full {
-                width: 100% !important;
-                max-width: 100% !important;
-                margin: 0 !important;
-                padding: 0 !important;
-            }
-            @page {
-                margin: 1cm;
-                size: A4 portrait;
-            }
-        }
-        
-        /* Mempertahankan format baris baru (enter) dari textarea */
         .whitespace-pre-wrap {
             white-space: pre-wrap;
         }
@@ -42,154 +14,127 @@
 </head>
 <body class="min-h-screen bg-gray-100 p-4 font-sans text-sm">
 
-    <!-- PANEL KONTROL (Disembunyikan saat di-print) -->
-    <div class="max-w-4xl mx-auto mb-6 bg-white p-6 rounded-xl shadow-md no-print">
+    <!-- PANEL KONTROL & EDITOR -->
+    <div class="max-w-4xl mx-auto mb-6 bg-white p-6 rounded-xl shadow-md">
         <div class="flex flex-col sm:flex-row justify-between items-center mb-4 border-b pb-4 gap-4">
-            <h2 class="text-xl font-bold text-gray-800">Panel Editor Jurnal</h2>
-            <button onclick="window.print()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors w-full sm:w-auto justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
-                Cetak / Simpan PDF
+            <h2 class="text-xl font-bold text-gray-800">Editor Jurnal Pembelajaran</h2>
+            
+            <!-- TOMBOL DOWNLOAD WORD -->
+            <button onclick="exportToWord()" class="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium transition-colors w-full sm:w-auto justify-center shadow">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 22h14a2 2 0 0 0 2-2V7.5L14.5 2H6a2 2 0 0 0-2 2v4"></path><polyline points="14 2 14 8 20 8"></polyline><path d="M2 15h10"></path><path d="m9 18 3-3-3-3"></path></svg>
+                Download MS Word
             </button>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <!-- Form Header Info -->
             <div class="space-y-3">
-                <h3 class="font-semibold text-gray-700">Informasi Jurnal</h3>
+                <h3 class="font-semibold text-gray-700 border-b pb-1">Identitas Jurnal</h3>
                 <div>
                     <label class="block text-xs text-gray-500">Nama Fasilitator</label>
-                    <input type="text" id="input-nama" value="Auliadi, S.Pd" class="w-full border p-2 rounded" oninput="updateText('doc-nama', this.value); updateText('doc-ttd-nama', this.value)" />
+                    <input type="text" id="input-nama" value="Auliadi, S.Pd" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" oninput="updatePreview()" />
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500">Bulan/Tahun</label>
-                    <input type="text" id="input-bulan" value="November/2025" class="w-full border p-2 rounded" oninput="updateText('doc-bulan', this.value)" />
+                    <input type="text" id="input-bulan" value="November/2025" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" oninput="updatePreview()" />
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500">Satuan Pendidikan</label>
-                    <input type="text" id="input-sekolah" value="SDN 2 Kapar" class="w-full border p-2 rounded" oninput="updateText('doc-sekolah', this.value); updateText('doc-title-sekolah', this.value); updateText('doc-ttd-sekolah', this.value)" />
+                    <input type="text" id="input-sekolah" value="SDN 2 Kapar" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" oninput="updatePreview()" />
                 </div>
             </div>
 
             <!-- Form Footer Info -->
             <div class="space-y-3">
-                <h3 class="font-semibold text-gray-700">Informasi Tanda Tangan</h3>
+                <h3 class="font-semibold text-gray-700 border-b pb-1">Tanda Tangan</h3>
                 <div>
                     <label class="block text-xs text-gray-500">Tempat, Tanggal Pembuatan</label>
-                    <input type="text" id="input-tempat-tanggal" value="Tabalong, 30 November 2025" class="w-full border p-2 rounded" oninput="updateText('doc-tempat-tanggal', this.value)" />
+                    <input type="text" id="input-tempat-tanggal" value="Tabalong, 30 November 2025" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" oninput="updatePreview()" />
                 </div>
                 <div>
                     <label class="block text-xs text-gray-500">Nama Kepala Sekolah</label>
-                    <input type="text" id="input-kepsek" value="Novi Eka Wieyanthi, S.Pd., M.Pd." class="w-full border p-2 rounded" oninput="updateText('doc-ttd-kepsek', this.value)" />
+                    <input type="text" id="input-kepsek" value="Novi Eka Wieyanthi, S.Pd., M.Pd." class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" oninput="updatePreview()" />
                 </div>
             </div>
         </div>
 
         <!-- Form Tambah Baris -->
-        <div class="mt-6 border-t pt-4">
-            <h3 class="font-semibold text-gray-700 mb-3">Tambah Kegiatan</h3>
+        <div class="mt-8 border-t pt-4 bg-gray-50 p-4 rounded-lg">
+            <h3 class="font-semibold text-gray-700 mb-3">Tambah Kegiatan Baru</h3>
             <form id="form-add" class="grid grid-cols-1 md:grid-cols-5 gap-3 items-end">
                 <div>
-                    <label class="block text-xs text-gray-500">Hari/Tanggal <span class="text-red-500">*</span></label>
-                    <input type="text" id="input-hari" placeholder="Cth: Senin, 1 Nov 2025" class="w-full border p-2 rounded" required />
+                    <label class="block text-xs text-gray-500 mb-1">Hari/Tanggal <span class="text-red-500">*</span></label>
+                    <input type="text" id="input-hari" placeholder="Cth: Senin, 1 Nov 2025" class="w-full border p-2 rounded focus:ring-2 focus:ring-blue-300 outline-none" required />
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500">Kelas</label>
-                    <textarea id="input-kelas" placeholder="Kelas..." class="w-full border p-2 rounded h-10 resize-none"></textarea>
+                    <label class="block text-xs text-gray-500 mb-1">Kelas</label>
+                    <textarea id="input-kelas" placeholder="Kelas..." class="w-full border p-2 rounded h-10 resize-none focus:ring-2 focus:ring-blue-300 outline-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500">Materi</label>
-                    <textarea id="input-materi" placeholder="Materi yang diajarkan..." class="w-full border p-2 rounded h-10 resize-none"></textarea>
+                    <label class="block text-xs text-gray-500 mb-1">Materi</label>
+                    <textarea id="input-materi" placeholder="Materi yang diajarkan..." class="w-full border p-2 rounded h-10 resize-none focus:ring-2 focus:ring-blue-300 outline-none"></textarea>
                 </div>
                 <div>
-                    <label class="block text-xs text-gray-500">Metode/Kegiatan</label>
-                    <textarea id="input-metode" placeholder="Tahsin, dll..." class="w-full border p-2 rounded h-10 resize-none"></textarea>
+                    <label class="block text-xs text-gray-500 mb-1">Metode/Kegiatan</label>
+                    <textarea id="input-metode" placeholder="Tahsin, dll..." class="w-full border p-2 rounded h-10 resize-none focus:ring-2 focus:ring-blue-300 outline-none"></textarea>
                 </div>
                 <div class="flex flex-col gap-2">
-                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer">
+                    <label class="flex items-center gap-2 text-sm text-gray-700 cursor-pointer bg-white p-1 rounded border">
                         <input type="checkbox" id="input-libur" class="rounded" />
-                        Hari Libur?
+                        Hari Libur
                     </label>
                     <button type="submit" class="flex justify-center items-center gap-1 bg-green-600 hover:bg-green-700 text-white p-2 rounded transition-colors w-full">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-                        Tambah
+                        Tambah Baris
                     </button>
                 </div>
             </form>
-            <p class="text-xs text-gray-500 mt-2">*Tips: Tekan "Enter" di dalam kotak Kelas/Materi untuk membuat teks multi-baris (seperti baris no 2 di contoh).</p>
+            <p class="text-xs text-gray-500 mt-2">*Tekan <strong>"Enter"</strong> di dalam kotak Kelas/Materi/Metode untuk membuat tulisan bersusun ke bawah.</p>
         </div>
     </div>
 
-    <!-- KERTAS DOKUMEN (Tampilan yang akan di-print) -->
-    <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 shadow-lg print-shadow-none print-w-full">
-        
-        <!-- Judul -->
-        <div class="text-center font-bold mb-8 print-exact">
+    <!-- PREVIEW AREA -->
+    <div class="max-w-4xl mx-auto bg-white p-8 md:p-12 shadow-lg border border-gray-200">
+        <div class="text-center font-bold mb-8">
             <h1 class="text-base uppercase">Jurnal Pembelajaran Bulanan</h1>
-            <h2 class="text-base uppercase">PEKA <span id="doc-title-sekolah">SDN 2 Kapar</span></h2>
+            <h2 class="text-base uppercase">PEKA <span id="preview-sekolah-title">SDN 2 Kapar</span></h2>
         </div>
 
-        <!-- Info Header Jurnal -->
         <div class="mb-6">
-            <table class="w-full max-w-sm text-sm print-exact">
+            <table class="w-full max-w-sm text-sm">
                 <tbody>
-                    <tr>
-                        <td class="font-semibold py-1 w-32">Nama Fasilitator PEKA</td>
-                        <td class="w-4">:</td>
-                        <td id="doc-nama">Auliadi, S.Pd</td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold py-1">Bulan/Tahun</td>
-                        <td>:</td>
-                        <td id="doc-bulan">November/2025</td>
-                    </tr>
-                    <tr>
-                        <td class="font-semibold py-1">Satuan Pendidikan</td>
-                        <td>:</td>
-                        <td id="doc-sekolah">SDN 2 Kapar</td>
-                    </tr>
+                    <tr><td class="font-semibold py-1 w-40">Nama Fasilitator PEKA</td><td class="w-4">:</td><td id="preview-nama">Auliadi, S.Pd</td></tr>
+                    <tr><td class="font-semibold py-1">Bulan/Tahun</td><td>:</td><td id="preview-bulan">November/2025</td></tr>
+                    <tr><td class="font-semibold py-1">Satuan Pendidikan</td><td>:</td><td id="preview-sekolah">SDN 2 Kapar</td></tr>
                 </tbody>
             </table>
         </div>
 
-        <!-- Tabel Jurnal -->
         <div class="overflow-x-auto">
-            <table class="w-full border-collapse border border-black text-sm print-exact">
+            <table class="w-full border-collapse border border-gray-800 text-sm">
                 <thead>
-                    <tr class="bg-yellow-300 print-exact">
-                        <th class="border border-black p-2 text-center w-10">No.</th>
-                        <th class="border border-black p-2 text-center w-48">Hari/Tanggal</th>
-                        <th class="border border-black p-2 text-center w-24">Kelas</th>
-                        <th class="border border-black p-2 text-center">Materi Yang Diajarkan</th>
-                        <th class="border border-black p-2 text-center w-48">Uraian Kegiatan / Metode</th>
-                        <th class="border border-black p-2 text-center w-10 no-print">Aksi</th>
+                    <tr class="bg-yellow-300">
+                        <th class="border border-gray-800 p-2 text-center w-10">No.</th>
+                        <th class="border border-gray-800 p-2 text-center w-48">Hari/Tanggal</th>
+                        <th class="border border-gray-800 p-2 text-center w-24">Kelas</th>
+                        <th class="border border-gray-800 p-2 text-center">Materi Yang Diajarkan</th>
+                        <th class="border border-gray-800 p-2 text-center w-48">Uraian Kegiatan / Metode</th>
+                        <th class="border border-gray-800 p-2 text-center w-10">Hapus</th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
-                    <!-- Data tabel akan dirender oleh JavaScript di sini -->
+                <tbody id="preview-table-body">
+                    <!-- Data preview dirender disini -->
                 </tbody>
             </table>
         </div>
-
-        <!-- Footer Tanda Tangan -->
-        <div class="mt-12 flex flex-col sm:flex-row justify-between items-start gap-8 print-exact">
-            <div class="text-center w-full sm:w-64">
-                <p class="mb-20">Fasilitator PEKA</p>
-                <p class="font-bold underline" id="doc-ttd-nama">Auliadi, S.Pd</p>
-            </div>
-            
-            <div class="text-center w-full sm:w-64">
-                <p id="doc-tempat-tanggal">Tabalong, 30 November 2025</p>
-                <p>Mengetahui,</p>
-                <p class="mb-20">Kepala <span id="doc-ttd-sekolah">SDN 2 Kapar</span></p>
-                <p class="font-bold underline" id="doc-ttd-kepsek">Novi Eka Wieyanthi, S.Pd., M.Pd.</p>
-            </div>
+        
+        <div class="text-sm mt-4 text-gray-500 italic text-center">
+            (Tanda tangan akan dimunculkan di file Word hasil download)
         </div>
-
     </div>
 
-    <!-- Script Logika Aplikasi -->
+    <!-- SCRIPT APLIKASI -->
     <script>
-        // Data Awal Jurnal (Sesuai Gambar)
+        // Data Awal (Bisa dihapus jika ingin kosong dari awal)
         let jurnalData = [
             { id: 1, hari: 'Selasa, 11 November 2025', kelas: '2 & 3', materi: 'Ta\'awudz & Basmallah', metode: 'Tahsin', isLibur: false },
             { id: 2, hari: 'Rabu, 12 November 2025', kelas: '4\n1 - 6', materi: 'Ta\'awudz & Ayat 1 - 2 Al-Fatihah\nSholat Dhuha Berjama\'ah', metode: 'Tahsin\nPembiasaan', isLibur: false },
@@ -197,79 +142,202 @@
             { id: 4, hari: 'Kamis, 27 November 2025', kelas: '-', materi: 'Libur Hari Pahlawan', metode: '-', isLibur: true }
         ];
 
-        // Fungsi untuk memperbarui teks di kertas (secara realtime)
-        function updateText(elementId, value) {
-            document.getElementById(elementId).textContent = value;
+        // 1. Fungsi Update Preview Web
+        function updatePreview() {
+            document.getElementById('preview-nama').textContent = document.getElementById('input-nama').value;
+            document.getElementById('preview-bulan').textContent = document.getElementById('input-bulan').value;
+            const sekolah = document.getElementById('input-sekolah').value;
+            document.getElementById('preview-sekolah').textContent = sekolah;
+            document.getElementById('preview-sekolah-title').textContent = sekolah;
         }
 
-        // Fungsi untuk merender ulang tabel
+        // 2. Fungsi Render Tabel di Preview
         function renderTable() {
-            const tbody = document.getElementById('table-body');
-            tbody.innerHTML = ''; // Kosongkan tabel sebelum diisi ulang
+            const tbody = document.getElementById('preview-table-body');
+            tbody.innerHTML = ''; 
 
             if (jurnalData.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="border border-black p-4 text-center text-gray-500">Belum ada data kegiatan. Tambahkan melalui panel di atas.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="6" class="border border-gray-800 p-4 text-center text-gray-500">Belum ada data. Silakan tambahkan.</td></tr>`;
                 return;
             }
 
             jurnalData.forEach((row, index) => {
                 const tr = document.createElement('tr');
-                
-                // Jika hari libur, warnai merah tebal
-                if (row.isLibur) {
-                    tr.className = "bg-red-600 text-white font-semibold print-exact";
-                }
+                if (row.isLibur) tr.className = "bg-red-600 text-white font-semibold";
 
                 tr.innerHTML = `
-                    <td class="border border-black p-2 text-center align-top">${index + 1}.</td>
-                    <td class="border border-black p-2 align-top">${row.hari}</td>
-                    <td class="border border-black p-2 text-center align-top whitespace-pre-wrap">${row.kelas}</td>
-                    <td class="border border-black p-2 align-top whitespace-pre-wrap ${row.isLibur ? 'text-center' : ''}">${row.materi}</td>
-                    <td class="border border-black p-2 text-center align-top whitespace-pre-wrap">${row.metode}</td>
-                    <td class="border border-black p-2 text-center no-print">
-                        <button onclick="deleteRow(${row.id})" class="text-red-500 hover:text-red-700 bg-white p-1 rounded cursor-pointer" title="Hapus baris">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>
-                        </button>
+                    <td class="border border-gray-800 p-2 text-center align-top">${index + 1}.</td>
+                    <td class="border border-gray-800 p-2 align-top">${escapeHtml(row.hari)}</td>
+                    <td class="border border-gray-800 p-2 text-center align-top whitespace-pre-wrap">${escapeHtml(row.kelas)}</td>
+                    <td class="border border-gray-800 p-2 align-top whitespace-pre-wrap ${row.isLibur ? 'text-center' : ''}">${escapeHtml(row.materi)}</td>
+                    <td class="border border-gray-800 p-2 text-center align-top whitespace-pre-wrap">${escapeHtml(row.metode)}</td>
+                    <td class="border border-gray-800 p-2 text-center">
+                        <button type="button" onclick="deleteRow(${row.id})" class="text-red-500 hover:text-red-700 bg-white px-2 py-1 rounded cursor-pointer font-bold border border-red-200">X</button>
                     </td>
                 `;
                 tbody.appendChild(tr);
             });
         }
 
-        // Fungsi Tambah Baris
+        // 3. Tambah Baris
         document.getElementById('form-add').addEventListener('submit', function(e) {
-            e.preventDefault(); // Mencegah reload halaman
-
-            const hari = document.getElementById('input-hari').value;
-            const kelas = document.getElementById('input-kelas').value;
-            const materi = document.getElementById('input-materi').value;
-            const metode = document.getElementById('input-metode').value;
-            const isLibur = document.getElementById('input-libur').checked;
-
+            e.preventDefault();
             const newRow = {
                 id: Date.now(),
-                hari: hari,
-                kelas: kelas,
-                materi: materi,
-                metode: metode,
-                isLibur: isLibur
+                hari: document.getElementById('input-hari').value,
+                kelas: document.getElementById('input-kelas').value,
+                materi: document.getElementById('input-materi').value,
+                metode: document.getElementById('input-metode').value,
+                isLibur: document.getElementById('input-libur').checked
             };
-
             jurnalData.push(newRow);
             renderTable();
-
-            // Reset form setelah menambah data
-            this.reset();
+            
+            // Reset input yang diketik, kecuali checkbox libur
+            document.getElementById('input-hari').value = '';
+            document.getElementById('input-kelas').value = '';
+            document.getElementById('input-materi').value = '';
+            document.getElementById('input-metode').value = '';
+            document.getElementById('input-libur').checked = false;
         });
 
-        // Fungsi Hapus Baris
+        // 4. Hapus Baris
         window.deleteRow = function(id) {
             jurnalData = jurnalData.filter(row => row.id !== id);
             renderTable();
         };
 
-        // Render tabel pertama kali saat halaman dimuat
+        // Utility: Mencegah error karakter khusus HTML dan mengubah "enter" menjadi "<br>" untuk Word
+        function escapeHtml(text) {
+            if (!text) return "";
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;");
+        }
+        function formatWordText(text) {
+            if (!text) return "";
+            // Ganti line-break \n menjadi <br> agar di Word pindah baris
+            return escapeHtml(text).replace(/\n/g, "<br>");
+        }
+
+        // 5. FUNGSI EXPORT KE MS WORD
+        window.exportToWord = function() {
+            // Ambil data identitas
+            const nama = escapeHtml(document.getElementById('input-nama').value);
+            const bulan = escapeHtml(document.getElementById('input-bulan').value);
+            const sekolah = escapeHtml(document.getElementById('input-sekolah').value);
+            const tempatTgl = escapeHtml(document.getElementById('input-tempat-tanggal').value);
+            const kepsek = escapeHtml(document.getElementById('input-kepsek').value);
+
+            // Bangun Tabel dalam bentuk HTML yang dikenali oleh Microsoft Word
+            let tableHTML = `
+                <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; font-family: 'Times New Roman', Times, serif; font-size: 11pt; border: 1px solid black;">
+                    <thead>
+                        <tr style="background-color: #FFFF00;">
+                            <th style="width: 5%; border: 1px solid black;">No.</th>
+                            <th style="width: 20%; border: 1px solid black;">Hari/Tanggal</th>
+                            <th style="width: 10%; border: 1px solid black;">Kelas</th>
+                            <th style="width: 35%; border: 1px solid black;">Materi Yang Diajarkan</th>
+                            <th style="width: 30%; border: 1px solid black;">Uraian Kegiatan / Metode</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            jurnalData.forEach((row, index) => {
+                let rowStyle = row.isLibur ? 'background-color: #FF0000; color: #FFFFFF; font-weight: bold;' : '';
+                tableHTML += `
+                    <tr style="${rowStyle}">
+                        <td style="border: 1px solid black; text-align: center; vertical-align: top;">${index + 1}.</td>
+                        <td style="border: 1px solid black; vertical-align: top;">${formatWordText(row.hari)}</td>
+                        <td style="border: 1px solid black; text-align: center; vertical-align: top;">${formatWordText(row.kelas)}</td>
+                        <td style="border: 1px solid black; vertical-align: top; ${row.isLibur ? 'text-align: center;' : ''}">${formatWordText(row.materi)}</td>
+                        <td style="border: 1px solid black; text-align: center; vertical-align: top;">${formatWordText(row.metode)}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `</tbody></table>`;
+
+            // Struktur Dokumen Khusus Word
+            const documentHTML = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head>
+                    <meta charset='utf-8'>
+                    <title>Jurnal Pembelajaran</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Times, serif; font-size: 11pt; }
+                        p { margin: 0; padding: 0; }
+                    </style>
+                </head>
+                <body>
+                    <!-- Judul -->
+                    <div style="text-align: center; font-weight: bold; text-transform: uppercase; margin-bottom: 20px;">
+                        <p style="font-size: 12pt; margin-bottom: 2px;">JURNAL PEMBELAJARAN BULANAN</p>
+                        <p style="font-size: 12pt;">PEKA ${sekolah}</p>
+                    </div>
+
+                    <!-- Identitas -->
+                    <table style="margin-bottom: 15px; font-size: 11pt; border: none; font-family: 'Times New Roman', Times, serif;">
+                        <tr>
+                            <td style="font-weight: bold; width: 170px;">Nama Fasilitator PEKA</td>
+                            <td style="width: 10px;">:</td>
+                            <td>${nama}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Bulan/Tahun</td>
+                            <td>:</td>
+                            <td>${bulan}</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: bold;">Satuan Pendidikan</td>
+                            <td>:</td>
+                            <td>${sekolah}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Tabel Utama -->
+                    ${tableHTML}
+
+                    <br><br>
+
+                    <!-- Tanda Tangan -->
+                    <table style="width: 100%; font-size: 11pt; border: none; font-family: 'Times New Roman', Times, serif; text-align: center;">
+                        <tr>
+                            <td style="width: 50%; vertical-align: top; padding-top: 15px;">
+                                <p style="margin-bottom: 80px;">Fasilitator PEKA</p>
+                                <p style="font-weight: bold; text-decoration: underline; margin:0;">${nama}</p>
+                            </td>
+                            <td style="width: 50%; vertical-align: top;">
+                                <p style="margin:0;">${tempatTgl}</p>
+                                <p style="margin-bottom: 80px;">Mengetahui,<br>Kepala ${sekolah}</p>
+                                <p style="font-weight: bold; text-decoration: underline; margin:0;">${kepsek}</p>
+                            </td>
+                        </tr>
+                    </table>
+                </body>
+                </html>
+            `;
+
+            // Membuat Blob dan Trigger Download .doc
+            const blob = new Blob(['\ufeff', documentHTML], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            // Gunakan format .doc agar kompatibel dengan injeksi HTML ke Microsoft Word
+            link.download = `Jurnal_Pembelajaran_${bulan.replace(/\//g, '_')}.doc`;
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+        };
+
+        // Render pertama kali
+        updatePreview();
         renderTable();
     </script>
 </body>
 </html>
+
