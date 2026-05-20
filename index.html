@@ -9,23 +9,17 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        /* Gaya khusus untuk memastikan warna tercetak di PDF */
         @media print {
             body { background-color: white !important; color: black !important; }
             .no-print { display: none !important; }
             .print-only { display: block !important; }
             
-            /* Memaksa browser mencetak warna background (kuning dan merah) */
             * {
                 -webkit-print-color-adjust: exact !important;
                 print-color-adjust: exact !important;
             }
             
-            /* Pengaturan halaman PDF */
-            @page {
-                size: A4 portrait;
-                margin: 1.5cm;
-            }
+            @page { size: A4 portrait; margin: 1.5cm; }
 
             .print-table {
                 width: 100%;
@@ -37,28 +31,25 @@
                 border: 1px solid #000 !important;
                 padding: 8px 10px !important;
                 font-size: 11pt !important;
-                vertical-align: top; /* Teks sejajar atas untuk multi-baris */
+                vertical-align: top;
             }
             
             .print-table th {
-                background-color: #ffeb3b !important; /* Warna kuning */
+                background-color: #ffeb3b !important; /* Kuning */
                 font-weight: bold;
                 text-align: center;
                 vertical-align: middle;
             }
 
             .row-holiday td {
-                background-color: #d32f2f !important; /* Warna merah */
+                background-color: #d32f2f !important; /* Merah */
                 color: white !important;
                 font-weight: bold;
                 text-align: center !important;
             }
         }
         
-        /* Sembunyikan area cetak di layar biasa */
-        @media screen {
-            .print-only { display: none; }
-        }
+        @media screen { .print-only { display: none; } }
         
         input, select, textarea { font-size: 14px !important; }
         .fade-in { animation: fadeIn 0.2s ease-in-out; }
@@ -99,7 +90,6 @@
                     Simpan Pengaturan
                 </button>
             </form>
-
             <div class="mt-6 pt-4 border-t border-slate-200">
                 <button type="button" id="btnResetData" class="w-full text-red-500 hover:text-red-700 hover:bg-red-50 p-2 rounded-lg text-sm font-medium transition-colors flex justify-center items-center">
                     <i data-lucide="alert-triangle" class="w-4 h-4 mr-2"></i> Hapus Seluruh Data Jurnal (Reset)
@@ -133,11 +123,11 @@
             
             <!-- Kolom Kiri: Form Input -->
             <div class="lg:col-span-1 space-y-6">
-                <!-- Filter Bulan Aktif -->
+                <!-- Filter Bulan -->
                 <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-200">
                     <label class="block text-sm font-bold text-slate-700 mb-2 uppercase tracking-wide">Pilih Bulan Jurnal</label>
                     <input type="month" id="monthFilter" class="w-full border border-slate-300 rounded-lg p-3 bg-blue-50 font-bold text-blue-700 cursor-pointer focus:ring-blue-500 focus:border-blue-500">
-                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">Pilih bulan untuk melihat riwayat atau mencetak PDF.</p>
+                    <p class="text-xs text-slate-500 mt-2 leading-relaxed">Pilih bulan untuk melihat riwayat tabel di samping atau mencetak PDF.</p>
                 </div>
 
                 <!-- Form Input Harian -->
@@ -147,7 +137,7 @@
                     </h2>
                     <form id="jurnalForm" class="space-y-4">
                         <div>
-                            <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Kegiatan</label>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Tanggal Kegiatan <span class="text-red-500">*</span></label>
                             <input type="date" id="inputTanggal" required class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-blue-500 focus:border-blue-500">
                         </div>
 
@@ -172,7 +162,6 @@
                             </div>
                         </div>
 
-                        <!-- Input Keterangan Libur (Muncul jika checkbox libur dicentang) -->
                         <div id="formLiburFields" class="hidden">
                             <label class="block text-sm font-medium text-slate-700 mb-1">Keterangan Libur</label>
                             <input type="text" id="inputKetLibur" placeholder="Cth: Libur Hari Pahlawan" class="w-full border border-slate-300 rounded-lg p-2.5 bg-slate-50 focus:ring-blue-500 focus:border-blue-500">
@@ -195,7 +184,7 @@
                         </button>
                     </div>
                     
-                    <!-- Tabel Preview (Desain mirip asli tapi untuk layar) -->
+                    <!-- Tabel Preview -->
                     <div class="overflow-x-auto flex-1 border border-slate-200 rounded-lg">
                         <table class="w-full text-sm text-left">
                             <thead class="text-xs text-slate-800 uppercase bg-yellow-300">
@@ -205,7 +194,7 @@
                                     <th class="px-4 py-3 border-r border-slate-300 w-20 text-center">Kelas</th>
                                     <th class="px-4 py-3 border-r border-slate-300 text-center">Materi Yang Diajarkan</th>
                                     <th class="px-4 py-3 text-center w-48 border-r border-slate-300">Uraian Kegiatan / Metode</th>
-                                    <th class="px-2 py-3 text-center w-12 bg-white">Hapus</th>
+                                    <th class="px-2 py-3 text-center w-12 bg-white">Hps</th>
                                 </tr>
                             </thead>
                             <tbody id="previewTableBody" class="divide-y divide-slate-200 bg-white">
@@ -213,21 +202,19 @@
                             </tbody>
                         </table>
                     </div>
-                    <p class="text-xs text-slate-400 mt-4 text-center italic">*Tampilan PDF akan dicetak dengan kertas A4 Portrait, bergaris hitam penuh, dan tanpa tombol hapus.</p>
+                    <p class="text-xs text-slate-400 mt-4 text-center italic">*Tampilan PDF akan dicetak bergaris hitam penuh, sesuai format standar, tanpa tombol hapus.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- AREA CETAK PDF (HANYA MUNCUL SAAT DI-PRINT) -->
+    <!-- AREA CETAK PDF -->
     <div class="print-only">
-        <!-- Judul Kop Dokumen -->
         <div style="text-align: center; margin-bottom: 25px; font-family: 'Times New Roman', Times, serif;">
             <h2 style="font-size: 14pt; font-weight: bold; margin: 0; line-height: 1.2;">JURNAL PEMBELAJARAN BULANAN</h2>
             <h2 style="font-size: 14pt; font-weight: bold; margin: 0; text-transform: uppercase;" id="printJudulSekolah">PEKA SDN 2 KAPAR</h2>
         </div>
 
-        <!-- Info Header -->
         <div style="margin-bottom: 20px; font-family: 'Times New Roman', Times, serif; font-size: 11pt;">
             <table style="width: 100%; border: none;">
                 <tr>
@@ -248,15 +235,14 @@
             </table>
         </div>
 
-        <!-- Tabel Utama Jurnal -->
         <table class="print-table" style="font-family: 'Times New Roman', Times, serif;">
             <thead>
                 <tr>
                     <th style="width: 5%;">No.</th>
-                    <th style="width: 25%;">Hari/Tanggal</th>
+                    <th style="width: 20%;">Hari/Tanggal</th>
                     <th style="width: 10%;">Kelas</th>
                     <th style="width: 35%;">Materi Yang Diajarkan</th>
-                    <th style="width: 25%;">Uraian Kegiatan / Metode</th>
+                    <th style="width: 30%;">Uraian Kegiatan / Metode</th>
                 </tr>
             </thead>
             <tbody id="printTableBody">
@@ -264,15 +250,12 @@
             </tbody>
         </table>
 
-        <!-- Footer / Tanda Tangan -->
         <div style="margin-top: 40px; font-family: 'Times New Roman', Times, serif; font-size: 11pt; width: 100%; display: flex; justify-content: space-between;">
-            <!-- Kolom Kiri -->
             <div style="width: 45%; text-align: left;">
                 <p style="margin-bottom: 70px;"><br>Fasilitator PEKA,</p>
                 <p style="font-weight: bold; margin: 0; text-decoration: underline;" id="printTtdFasilitator">-</p>
             </div>
             
-            <!-- Kolom Kanan -->
             <div style="width: 45%; text-align: right;">
                 <p style="margin: 0;" id="printTanggalTtd">Kota, Tanggal</p>
                 <p style="margin-top: 5px; margin-bottom: 70px;">Mengetahui,<br>Kepala Sekolah <span id="printTtdSekolah">-</span></p>
@@ -287,18 +270,25 @@
         <span id="toastMsg" class="font-medium">Tersimpan</span>
     </div>
 
-    <!-- Script Logika Aplikasi -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             lucide.createIcons();
             
-            // Konfigurasi Database Lokal - Menggunakan Key Baru agar bebas dari bentrok data lama
-            const STORAGE_KEY = 'jurnalPekaBulanan_CleanV2';
+            const STORAGE_KEY = 'jurnalPekaBulanan_SuperStableV3';
 
-            // --- FUNGSI HELPER TANGGAL ---
+            // Mendapatkan Tanggal Lokal (WIB/WITA/WIT) yang akurat
+            const getLocalDateString = () => {
+                const now = new Date();
+                const year = now.getFullYear();
+                const month = String(now.getMonth() + 1).padStart(2, '0');
+                const day = String(now.getDate()).padStart(2, '0');
+                return `${year}-${month}-${day}`;
+            };
+
             const formatTanggalIndo = (dateStr) => {
                 if(!dateStr) return '';
-                const dateObj = new Date(dateStr);
+                const parts = dateStr.split('-');
+                const dateObj = new Date(parts[0], parts[1]-1, parts[2]);
                 return dateObj.toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
             };
 
@@ -312,43 +302,45 @@
             const getTanggalAkhirBulan = (yyyyMm) => {
                 if(!yyyyMm) return '-';
                 const [year, month] = yyyMm.split('-');
-                const dateObj = new Date(year, parseInt(month, 10), 0); // 0 memberikan hari terakhir dari bulan yang dipilih
+                const dateObj = new Date(year, parseInt(month, 10), 0); 
                 return dateObj.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
             };
 
-            // --- MANAJEMEN STATE & PENYIMPANAN ---
-            const getDefaultState = () => {
-                const today = new Date();
-                const currentMonth = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
-                return {
+            // Manajemen State
+            let appState = (() => {
+                const data = localStorage.getItem(STORAGE_KEY);
+                const localDate = getLocalDateString();
+                const currentMonth = localDate.substring(0, 7); // YYYY-MM
+                
+                let defaultState = {
                     settings: { fasilitator: '', sekolah: '', kepsek: '', kota: '' },
                     journals: [],
                     selectedMonth: currentMonth
                 };
-            };
 
-            let appState = (() => {
-                const data = localStorage.getItem(STORAGE_KEY);
                 if (data) {
                     try {
                         const parsed = JSON.parse(data);
                         return {
-                            settings: { ...getDefaultState().settings, ...(parsed.settings || {}) },
+                            settings: parsed.settings || defaultState.settings,
                             journals: parsed.journals || [],
-                            selectedMonth: parsed.selectedMonth || getDefaultState().selectedMonth
+                            selectedMonth: parsed.selectedMonth || currentMonth
                         };
                     } catch (e) {
-                        console.error('Error parsing local storage data.');
+                        console.error('Error membaca data', e);
                     }
                 }
-                return getDefaultState();
+                return defaultState;
             })();
 
             const saveData = () => {
-                localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                try {
+                    localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+                } catch (e) {
+                    console.error("Local storage error:", e);
+                }
             };
 
-            // --- UTILITAS UI (TOAST) ---
             const showToast = (msg) => {
                 const toast = document.getElementById('toast');
                 document.getElementById('toastMsg').innerText = msg;
@@ -360,22 +352,18 @@
                 }, 3000);
             };
 
-            // --- RENDER DAN UPDATE UI ---
+            // Render UI
             const updateSettingsUI = () => {
                 const s = appState.settings;
-                // Layar Biasa
                 document.getElementById('headerSekolah').innerText = s.sekolah || 'Silakan isi pengaturan profil';
                 
-                // Cetak PDF
-                const sekolahStr = s.sekolah || '';
-                document.getElementById('printJudulSekolah').innerText = `PEKA ${sekolahStr.toUpperCase()}`;
+                document.getElementById('printJudulSekolah').innerText = s.sekolah ? `PEKA ${s.sekolah.toUpperCase()}` : 'PEKA';
                 document.getElementById('printNamaFasilitator').innerText = s.fasilitator || '-';
                 document.getElementById('printNamaSekolah').innerText = s.sekolah || '-';
                 document.getElementById('printTtdFasilitator').innerText = s.fasilitator || '-';
                 document.getElementById('printTtdSekolah').innerText = s.sekolah || '-';
                 document.getElementById('printTtdKepsek').innerText = s.kepsek || '-';
                 
-                // Set Tanggal TTD otomatis ke akhir bulan terpilih
                 document.getElementById('printTanggalTtd').innerText = `${s.kota || 'Kota'}, ${getTanggalAkhirBulan(appState.selectedMonth)}`;
             };
 
@@ -383,16 +371,14 @@
                 const previewTbody = document.getElementById('previewTableBody');
                 const printTbody = document.getElementById('printTableBody');
                 
-                // Filter & Sort
                 let filteredJournals = appState.journals.filter(j => j.date.startsWith(appState.selectedMonth));
                 filteredJournals.sort((a, b) => new Date(a.date) - new Date(b.date));
 
-                // Update Header PDF
                 document.getElementById('printBulanTahun').innerText = formatBulanTahun(appState.selectedMonth);
 
                 if (filteredJournals.length === 0) {
                     previewTbody.innerHTML = `<tr><td colspan="6" class="text-center py-10 text-slate-500 italic">Belum ada data jurnal di bulan ini.</td></tr>`;
-                    printTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Belum ada data</td></tr>`;
+                    printTbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Belum ada data jurnal.</td></tr>`;
                     return;
                 }
 
@@ -455,11 +441,9 @@
                 lucide.createIcons();
             };
 
-            // --- EVENT LISTENERS UI & FORM ---
-
-            // Inisiasi awal form
+            // Inisiasi UI
+            document.getElementById('inputTanggal').value = getLocalDateString();
             document.getElementById('monthFilter').value = appState.selectedMonth;
-            document.getElementById('inputTanggal').value = new Date().toISOString().split('T')[0];
             
             if (!appState.settings.fasilitator || !appState.settings.sekolah) {
                 document.getElementById('settingsModal').classList.remove('hidden');
@@ -469,13 +453,12 @@
             }
             renderTables();
 
-            // Interaksi Modal Pengaturan
+            // Event Listener Profil
             document.getElementById('openSettingsBtn').addEventListener('click', () => {
                 document.getElementById('setFasilitator').value = appState.settings.fasilitator || '';
                 document.getElementById('setSekolah').value = appState.settings.sekolah || '';
                 document.getElementById('setKepsek').value = appState.settings.kepsek || '';
                 document.getElementById('setKota').value = appState.settings.kota || '';
-                
                 document.getElementById('settingsModal').classList.remove('hidden');
                 document.getElementById('closeSettingsBtn').classList.remove('hidden');
             });
@@ -484,7 +467,6 @@
                 document.getElementById('settingsModal').classList.add('hidden');
             });
 
-            // Menyimpan Pengaturan
             document.getElementById('settingsForm').addEventListener('submit', (e) => {
                 e.preventDefault();
                 appState.settings = {
@@ -493,16 +475,13 @@
                     kepsek: document.getElementById('setKepsek').value.trim(),
                     kota: document.getElementById('setKota').value.trim()
                 };
-                
                 saveData();
                 updateSettingsUI();
-                
                 document.getElementById('settingsModal').classList.add('hidden');
                 document.getElementById('closeSettingsBtn').classList.remove('hidden');
                 showToast('Pengaturan profil berhasil disimpan!');
             });
 
-            // Tombol Reset Data
             document.getElementById('btnResetData').addEventListener('click', () => {
                 if(confirm('PERINGATAN: Anda yakin ingin menghapus seluruh data pengaturan dan riwayat jurnal? Tindakan ini tidak dapat dibatalkan.')) {
                     localStorage.removeItem(STORAGE_KEY);
@@ -510,7 +489,7 @@
                 }
             });
 
-            // Filter Bulan
+            // Filter Bulan Event
             document.getElementById('monthFilter').addEventListener('change', (e) => {
                 appState.selectedMonth = e.target.value;
                 saveData();
@@ -518,65 +497,60 @@
                 renderTables();
             });
 
-            // Logika Checkbox Libur
+            // Checkbox Libur Event
             document.getElementById('inputLibur').addEventListener('change', (e) => {
                 const isLibur = e.target.checked;
                 const normalFields = document.getElementById('formNormalFields');
                 const liburFields = document.getElementById('formLiburFields');
                 
-                const inpKelas = document.getElementById('inputKelas');
-                const inpMateri = document.getElementById('inputMateri');
-                const inpMetode = document.getElementById('inputMetode');
-                const inpKetLibur = document.getElementById('inputKetLibur');
-                
                 if(isLibur) {
                     normalFields.classList.add('hidden');
                     liburFields.classList.remove('hidden');
-                    
-                    // Toggle status wajib (required) agar tidak memblokir simpan
-                    inpKetLibur.required = true;
-                    inpKelas.required = false;
-                    inpMateri.required = false;
-                    inpMetode.required = false;
+                    document.getElementById('inputKetLibur').required = true;
                 } else {
                     normalFields.classList.remove('hidden');
                     liburFields.classList.add('hidden');
-                    
-                    // Kembalikan wajib diisi untuk kondisi normal
-                    inpKetLibur.required = false;
-                    inpKelas.required = true;
-                    inpMateri.required = true;
-                    inpMetode.required = true;
+                    document.getElementById('inputKetLibur').required = false;
                 }
             });
 
-            // Memicu pengecekan status required form libur saat pertama dimuat
-            document.getElementById('inputLibur').dispatchEvent(new Event('change'));
-
-            // Submit Jurnal Baru
+            // Simpan Jurnal Event
             document.getElementById('jurnalForm').addEventListener('submit', (e) => {
-                e.preventDefault();
-                const date = document.getElementById('inputTanggal').value;
+                e.preventDefault(); // Mencegah reload halaman
+                
+                const dateVal = document.getElementById('inputTanggal').value;
+                if(!dateVal) { alert("Pilih tanggal terlebih dahulu."); return; }
+
                 const isHoliday = document.getElementById('inputLibur').checked;
                 
                 let newEntry = {
                     id: `jrnl_${Date.now()}`,
-                    date: date,
+                    date: dateVal,
                     isHoliday: isHoliday
                 };
 
                 if (isHoliday) {
-                    newEntry.note = document.getElementById('inputKetLibur').value.trim();
+                    newEntry.note = document.getElementById('inputKetLibur').value.trim() || 'Libur';
                 } else {
-                    newEntry.kelas = document.getElementById('inputKelas').value.trim().replace(/\n/g, '<br>');
-                    newEntry.materi = document.getElementById('inputMateri').value.trim().replace(/\n/g, '<br>');
-                    newEntry.metode = document.getElementById('inputMetode').value.trim().replace(/\n/g, '<br>');
+                    newEntry.kelas = document.getElementById('inputKelas').value.trim().replace(/\n/g, '<br>') || '-';
+                    newEntry.materi = document.getElementById('inputMateri').value.trim().replace(/\n/g, '<br>') || '-';
+                    newEntry.metode = document.getElementById('inputMetode').value.trim().replace(/\n/g, '<br>') || '-';
                 }
 
+                // 1. Simpan Data
                 appState.journals.push(newEntry);
+                
+                // 2. OTOMATIS GANTI FILTER BULAN KE BULAN TANGGAL YANG DIINPUT
+                const inputMonth = dateVal.substring(0, 7); // Ambil YYYY-MM
+                if (appState.selectedMonth !== inputMonth) {
+                    appState.selectedMonth = inputMonth;
+                    document.getElementById('monthFilter').value = inputMonth;
+                    document.getElementById('printTanggalTtd').innerText = `${appState.settings.kota || 'Kota'}, ${getTanggalAkhirBulan(inputMonth)}`;
+                }
+
                 saveData();
                 
-                // Bersihkan form
+                // 3. Bersihkan Form
                 document.getElementById('inputKelas').value = '';
                 document.getElementById('inputMateri').value = '';
                 document.getElementById('inputMetode').value = '';
@@ -587,11 +561,12 @@
                     document.getElementById('inputLibur').dispatchEvent(new Event('change'));
                 }
                 
+                // 4. Update Tampilan
                 renderTables();
                 showToast('Jurnal berhasil ditambahkan!');
             });
 
-            // Eksekusi Hapus via Global Scope agar bisa dipanggil dari inline HTML
+            // Fungsi Hapus Global
             window.deleteJournal = (id) => {
                 if(confirm('Hapus baris jurnal ini?')) {
                     appState.journals = appState.journals.filter(j => j.id !== id);
@@ -599,7 +574,6 @@
                     renderTables();
                 }
             };
-
         });
     </script>
 </body>
